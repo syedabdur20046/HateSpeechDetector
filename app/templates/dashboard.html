@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeNet AI — Dashboard</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🛡️</span>
+    <span class="brand-name">SafeNet <span class="accent">AI</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Detect</a>
+    <a href="/history" class="nav-link">History</a>
+    <a href="/dashboard" class="nav-link active">Dashboard</a>
+    <a href="/export" class="nav-link export-btn">⬇ Export CSV</a>
+  </div>
+  <button class="theme-toggle" id="themeBtn">🌙</button>
+</nav>
+
+<main class="container" style="padding-top:100px">
+  <h2 class="card-title" style="margin-bottom:1.5rem">Model Performance Dashboard</h2>
+
+  {% if results %}
+  <div class="dash-grid">
+    {% for model_name, metrics in results.items() %}
+    <div class="card dash-card">
+      <h3 class="dash-model-name">{{ model_name }}</h3>
+      <div class="dash-metrics">
+        {% for metric, value in metrics.items() %}
+        <div class="dash-metric">
+          <span class="dash-label">{{ metric }}</span>
+          <div class="dash-bar-wrap">
+            <div class="dash-bar" style="width:{{ (value * 100)|int }}%"></div>
+          </div>
+          <span class="dash-val">{{ "%.3f"|format(value) }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="card">
+    <div class="empty-state">
+      <p>No model results found. Run <code>train.py</code> first.</p>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Session stats -->
+  <div class="card" style="margin-top:2rem">
+    <h3 class="card-title">Session Statistics</h3>
+    <div class="session-stats">
+      <div class="stat-item">
+        <span class="stat-number" id="totalPreds">{{ history|length }}</span>
+        <span class="stat-desc">Total Predictions</span>
+      </div>
+      <div class="stat-item danger">
+        <span class="stat-number">{{ history | selectattr('label','equalto','Hate Speech') | list | length }}</span>
+        <span class="stat-desc">Hate Speech</span>
+      </div>
+      <div class="stat-item warning">
+        <span class="stat-number">{{ history | selectattr('label','equalto','Offensive') | list | length }}</span>
+        <span class="stat-desc">Offensive</span>
+      </div>
+      <div class="stat-item success">
+        <span class="stat-number">{{ history | selectattr('label','equalto','Neutral') | list | length }}</span>
+        <span class="stat-desc">Neutral</span>
+      </div>
+    </div>
+  </div>
+
+</main>
+<footer class="footer">
+  <p>SafeNet AI &copy; 2024 &nbsp;|&nbsp; NLP Capstone Project</p>
+</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SafeNet AI — History</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-brand">
+    <span class="brand-icon">🛡️</span>
+    <span class="brand-name">SafeNet <span class="accent">AI</span></span>
+  </div>
+  <div class="nav-links">
+    <a href="/" class="nav-link">Detect</a>
+    <a href="/history" class="nav-link active">History</a>
+    <a href="/dashboard" class="nav-link">Dashboard</a>
+    <a href="/export" class="nav-link export-btn">⬇ Export CSV</a>
+  </div>
+  <button class="theme-toggle" id="themeBtn">🌙</button>
+</nav>
+
+<main class="container" style="padding-top:100px">
+  <div class="card">
+    <h2 class="card-title">Prediction History</h2>
+    {% if history %}
+    <div class="table-wrap">
+      <table class="hist-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Timestamp</th><th>Text</th>
+            <th>Label</th><th>Confidence</th><th>Severity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in history %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td>{{ row.timestamp }}</td>
+            <td class="text-cell">{{ row.text[:80] }}{% if row.text|length > 80 %}…{% endif %}</td>
+            <td>
+              <span class="badge badge-{{ row.color }}">
+                {{ row.emoji }} {{ row.label }}
+              </span>
+            </td>
+            <td>{{ row.confidence }}%</td>
+            <td>
+              <div class="mini-bar">
+                <div class="mini-fill" style="width:{{ row.severity }}%"></div>
+              </div>
+              <small>{{ row.severity }}/100</small>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <p>No predictions yet. <a href="/">Analyse some text</a> first.</p>
+    </div>
+    {% endif %}
+  </div>
+</main>
+
+<footer class="footer">
+  <p>SafeNet AI &copy; 2024 &nbsp;|&nbsp; NLP Capstone Project</p>
+</footer>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
